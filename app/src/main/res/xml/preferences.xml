@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Weather Location">
-        <SwitchPreference
-            android:defaultValue="true"
-            android:disableDependentsState="true"
-            android:key="USE_DEVICE_LOCATION"
-            android:summary="Allot the app to get the location"
-            android:title="Use Device Location" />
-
-        <EditTextPreference
-            android:defaultValue="Islamabad"
-            android:dependency="USE_DEVICE_LOCATION"
-            android:key="CUSTOM_LOCATION"
-            android:summary="The location for which the weather is displayed"
-            android:title="Location" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Units">
+    <PreferenceCategory android:title="Choose Your Unit System">
         <ListPreference
             android:defaultValue="METRIC"
             android:entries="@array/unitSystemEntries"
@@ -26,6 +9,22 @@
             android:key="UNIT_SYSTEM"
             android:summary="%s"
             android:title="Unit system" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Choose Your Location">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:disableDependentsState="true"
+            android:key="USE_DEVICE_LOCATION"
+            android:summary="Turn on to use current location"
+            android:title="Get Current Location" />
+
+        <EditTextPreference
+            android:defaultValue="Islamabad"
+            android:dependency="USE_DEVICE_LOCATION"
+            android:key="CUSTOM_LOCATION"
+            android:summary="Enter any loction to view weather"
+            android:title="Enter Location" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

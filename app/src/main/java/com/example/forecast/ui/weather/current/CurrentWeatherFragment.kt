@@ -27,25 +27,19 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
     private lateinit var viewModel: CurrentWeatherViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.current_weather_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel =
-            ViewModelProvider(this, viewModelFactory).get(CurrentWeatherViewModel::class.java)
-
+        viewModel = ViewModelProvider(this, viewModelFactory).get(CurrentWeatherViewModel::class.java)
         bindUI()
     }
 
     @SuppressLint("FragmentLiveDataObserve")
     private fun bindUI() = launch {
         val currentWeather = viewModel.weather.await()
-
         val weatherLocation = viewModel.weatherLocation.await()
 
         weatherLocation.observe(this@CurrentWeatherFragment, Observer { location ->

@@ -2,6 +2,7 @@ package com.example.forecast.ui.weather.current
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -79,10 +80,35 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
             if (it.weatherDescriptions[0] == "Sunny") {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
-            } else if (it.weatherDescriptions[0] == "Overcast") {
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
+            } else if (it.weatherDescriptions[0] == "Overcast" || it.weatherDescriptions[0] == "Cloudy" ) {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#BDBDBD"))
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
             } else if (it.weatherDescriptions[0] == "Partly cloudy") {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
+            } else if (it.weatherDescriptions[0] == "Clear") {
+                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#673AB7"))
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
+            } else if (it.weatherDescriptions[0] == "Patchy rain nearby" ||
+                    it.weatherDescriptions[0] == "Patchy freezing drizzle nearby" ||
+                    it.weatherDescriptions[0] == "Thundery outbreaks in nearby" ||
+                    it.weatherDescriptions[0] == "Light drizzle" ||
+                    it.weatherDescriptions[0] == "Freezing drizzle" ||
+                    it.weatherDescriptions[0] == "Heavy freezing drizzle" ||
+                    it.weatherDescriptions[0] == "Patchy light rain" ||
+                    it.weatherDescriptions[0] == "Moderate rain at times" ||
+                    it.weatherDescriptions[0] == "Moderate rain" ||
+                    it.weatherDescriptions[0] == "Heavy rain at times" ||
+                    it.weatherDescriptions[0] == "Light freezing rain" ||
+                    it.weatherDescriptions[0] == "Light rain shower" ||
+                    it.weatherDescriptions[0] == "Moderate or heavy rain shower" ||
+                    it.weatherDescriptions[0] == "Torrential rain shower" ||
+                    it.weatherDescriptions[0] == "Patchy light rain in area with thunder" ||
+                    it.weatherDescriptions[0] == "Moderate or heavy rain in area with thunder") {
+
+                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
             }
 
             GlideApp.with(this@CurrentWeatherFragment)

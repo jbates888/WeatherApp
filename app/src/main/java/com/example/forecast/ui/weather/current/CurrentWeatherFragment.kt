@@ -1,11 +1,13 @@
 package com.example.forecast.ui.weather.current
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,15 +21,18 @@ import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 import java.text.DecimalFormat
 
+
 class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
     override val kodein by closestKodein()
-
     private val viewModelFactory: CurrentWeatherViewModelFactory by instance()
-
     private lateinit var viewModel: CurrentWeatherViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.current_weather_fragment, container, false)
     }
 
@@ -72,6 +77,14 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             updateWind(it.windDir, it.windSpeed)
             updateVisibility(it.visibility)
 
+            if (it.weatherDescriptions[0] == "Sunny") {
+                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
+            } else if (it.weatherDescriptions[0] == "Overcast") {
+                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#BDBDBD"))
+            } else if (it.weatherDescriptions[0] == "Partly cloudy") {
+                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
+            }
+
             GlideApp.with(this@CurrentWeatherFragment)
                 .load(it.weatherIcons[0])
                 .into(imageView_condition_icon)
@@ -80,7 +93,6 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
     private fun chooseLocalizedUnitAbbreviation(metric: String, imperial: String): String {
         return if (viewModel.isMetric) metric else imperial
-
     }
 
     private fun updateLocation(location: String) {
@@ -88,7 +100,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun updateDateToToday() {
-        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Today"
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Current Weather"
     }
 
     private fun updateTemperatures(temperature: Double, feelsLikeTemp: Double) {

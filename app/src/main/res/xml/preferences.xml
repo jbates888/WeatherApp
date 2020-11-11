@@ -12,17 +12,17 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="Choose Your Location">
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:disableDependentsState="true"
             android:key="USE_DEVICE_LOCATION"
             android:summary="Turn on to use current location"
             android:title="Get Current Location" />
 
         <EditTextPreference
-            android:defaultValue="Islamabad"
+            android:defaultValue="New York"
             android:dependency="USE_DEVICE_LOCATION"
             android:key="CUSTOM_LOCATION"
-            android:summary="Enter any loction to view weather"
+            android:summary="Enter any location to view weather"
             android:title="Enter Location" />
 
     </PreferenceCategory>

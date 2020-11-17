@@ -69,9 +69,6 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         currentWeather.observe(this@CurrentWeatherFragment, Observer {
             if (it == null) return@Observer
 
-            group_loading.visibility = View.GONE
-            updateDateToToday()
-
             updateTemperatures(it.temperature, it.feelslike)
             updateCondition(it.weatherDescriptions[0])
             updatePrecipitation(it.precip)
@@ -124,10 +121,6 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
     private fun updateLocation(location: String) {
         (activity as? AppCompatActivity)?.supportActionBar?.title = location
-    }
-
-    private fun updateDateToToday() {
-        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Current Weather"
     }
 
     private fun updateTemperatures(temperature: Double, feelsLikeTemp: Double) {

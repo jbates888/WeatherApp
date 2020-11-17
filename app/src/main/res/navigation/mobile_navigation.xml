@@ -12,14 +12,9 @@
         tools:layout="@layout/current_weather_fragment" />
     <fragment
         android:id="@+id/futureWeatherFragment"
-        android:name="com.example.forecast.ui.weather.future.list.FutureWeatherFragment"
+        android:name="com.example.forecast.ui.weather.future.list.RatingsWeatherFragment"
         android:label="Future Weather"
-        tools:layout="@layout/future_weather_fragment" />
-    <fragment
-        android:id="@+id/futureDetailWeatherFragment"
-        android:name="com.example.forecast.ui.weather.future.detail.FutureDetailWeatherFragment"
-        android:label="future_detail_weather_fragment"
-        tools:layout="@layout/future_detail_weather_fragment" />
+        tools:layout="@layout/ratings_weather_fragment" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.forecast.ui.settings.SettingsFragment"

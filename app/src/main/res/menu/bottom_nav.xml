@@ -6,8 +6,8 @@
         android:title="Today" />
     <item
         android:id="@+id/futureWeatherFragment"
-        android:icon="@drawable/ic_calendar_week"
-        android:title="7 Days" />
+        android:icon="@drawable/ic_baseline_golf_course_24"
+        android:title="Ratings" />
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_settings"

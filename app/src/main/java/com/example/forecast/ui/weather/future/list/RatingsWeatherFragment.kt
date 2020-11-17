@@ -9,25 +9,25 @@ import androidx.lifecycle.ViewModelProvider
 
 import com.example.forecast.R
 
-class FutureWeatherFragment : Fragment() {
+class RatingsWeatherFragment : Fragment() {
 
     companion object {
         fun newInstance() =
-            FutureWeatherFragment()
+            RatingsWeatherFragment()
     }
 
-    private lateinit var viewModel: FutureWeatherViewModel
+    private lateinit var viewModel: RatingsWeatherViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.future_weather_fragment, container, false)
+        return inflater.inflate(R.layout.ratings_weather_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FutureWeatherViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(RatingsWeatherViewModel::class.java)
         // TODO: Use the ViewModel
     }
 

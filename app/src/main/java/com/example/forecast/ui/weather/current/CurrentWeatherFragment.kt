@@ -78,6 +78,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             updateWind(it.windDir, it.windSpeed)
             updateVisibility(it.visibility)
 
+            //set the background color based on the current weather
             if (it.weatherDescriptions[0] == "Sunny") {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
                 (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
@@ -106,11 +107,11 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                     it.weatherDescriptions[0] == "Torrential rain shower" ||
                     it.weatherDescriptions[0] == "Patchy light rain in area with thunder" ||
                     it.weatherDescriptions[0] == "Moderate or heavy rain in area with thunder") {
-
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
                 (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
             }
 
+            //load the current weather
             GlideApp.with(this@CurrentWeatherFragment)
                 .load(it.weatherIcons[0])
                 .into(imageView_condition_icon)

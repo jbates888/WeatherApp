@@ -49,11 +49,11 @@
         android:id="@+id/textView_condition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_condition_icon"
         tools:text="Patchy rain possible" />
 
     <ImageView
@@ -73,11 +73,11 @@
         android:id="@+id/textView_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_condition"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="25.0°C" />
 
     <TextView

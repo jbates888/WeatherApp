@@ -1,4 +1,4 @@
-package com.example.forecast.data.db.entity
+package com.example.forecast.data.database.entity
 
 data class Request(
     val type: String,

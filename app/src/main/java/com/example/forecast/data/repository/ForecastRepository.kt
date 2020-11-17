@@ -1,8 +1,8 @@
 package com.example.forecast.data.repository
 
 import androidx.lifecycle.LiveData
-import com.example.forecast.data.db.entity.CurrentWeatherEntry
-import com.example.forecast.data.db.entity.WeatherLocation
+import com.example.forecast.data.database.entity.CurrentWeatherEntry
+import com.example.forecast.data.database.entity.WeatherLocation
 
 interface ForecastRepository {
     suspend fun getCurrentWeather(): LiveData<CurrentWeatherEntry>

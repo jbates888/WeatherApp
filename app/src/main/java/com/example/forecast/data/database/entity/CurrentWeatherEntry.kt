@@ -1,4 +1,4 @@
-package com.example.forecast.data.db.entity
+package com.example.forecast.data.database.entity
 
 import androidx.room.*
 import com.google.gson.annotations.SerializedName

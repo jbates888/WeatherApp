@@ -1,11 +1,11 @@
-package com.example.forecast.data.db.database
+package com.example.forecast.data.database.database
 
 import android.content.Context
 import androidx.room.*
-import com.example.forecast.data.db.dao.CurrentWeatherDao
-import com.example.forecast.data.db.dao.WeatherLocationDao
-import com.example.forecast.data.db.entity.CurrentWeatherEntry
-import com.example.forecast.data.db.entity.WeatherLocation
+import com.example.forecast.data.database.dao.CurrentWeatherDao
+import com.example.forecast.data.database.dao.WeatherLocationDao
+import com.example.forecast.data.database.entity.CurrentWeatherEntry
+import com.example.forecast.data.database.entity.WeatherLocation
 import com.example.forecast.internal.Converters
 
 @Database(entities = [CurrentWeatherEntry::class, WeatherLocation::class], version = 1)

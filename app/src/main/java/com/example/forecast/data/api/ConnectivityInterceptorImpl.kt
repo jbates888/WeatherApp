@@ -1,4 +1,4 @@
-package com.example.forecast.data.network
+package com.example.forecast.data.api
 
 import android.content.Context
 import android.net.ConnectivityManager

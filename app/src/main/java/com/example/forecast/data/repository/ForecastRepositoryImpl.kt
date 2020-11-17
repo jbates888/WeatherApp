@@ -1,12 +1,12 @@
 package com.example.forecast.data.repository
 
 import androidx.lifecycle.LiveData
-import com.example.forecast.data.db.dao.CurrentWeatherDao
-import com.example.forecast.data.db.dao.WeatherLocationDao
-import com.example.forecast.data.db.entity.CurrentWeatherEntry
-import com.example.forecast.data.db.entity.WeatherLocation
-import com.example.forecast.data.network.WeatherNetworkDataSource
-import com.example.forecast.data.network.response.CurrentWeatherResponse
+import com.example.forecast.data.database.dao.CurrentWeatherDao
+import com.example.forecast.data.database.dao.WeatherLocationDao
+import com.example.forecast.data.database.entity.CurrentWeatherEntry
+import com.example.forecast.data.database.entity.WeatherLocation
+import com.example.forecast.data.api.WeatherNetworkDataSource
+import com.example.forecast.data.api.response.CurrentWeatherResponse
 import com.example.forecast.data.provider.LocationProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

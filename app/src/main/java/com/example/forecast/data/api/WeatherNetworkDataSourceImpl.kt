@@ -1,9 +1,9 @@
-package com.example.forecast.data.network
+package com.example.forecast.data.api
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.forecast.data.network.response.CurrentWeatherResponse
+import com.example.forecast.data.api.response.CurrentWeatherResponse
 import com.example.forecast.internal.NoConnectivityException
 
 class WeatherNetworkDataSourceImpl(

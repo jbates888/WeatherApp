@@ -5,8 +5,8 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.google.android.gms.location.LocationServices
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.example.forecast.data.db.database.ForecastDatabase
-import com.example.forecast.data.network.*
+import com.example.forecast.data.database.database.ForecastDatabase
+import com.example.forecast.data.api.*
 import com.example.forecast.data.provider.LocationProvider
 import com.example.forecast.data.provider.LocationProviderImpl
 import com.example.forecast.data.provider.UnitProvider

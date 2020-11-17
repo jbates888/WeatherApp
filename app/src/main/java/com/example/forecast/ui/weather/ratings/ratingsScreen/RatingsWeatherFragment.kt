@@ -1,4 +1,4 @@
-package com.example.forecast.ui.weather.future.list
+package com.example.forecast.ui.weather.ratings.ratingsScreen
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

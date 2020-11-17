@@ -1,12 +1,12 @@
-package com.example.forecast.data.db.dao
+package com.example.forecast.data.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.forecast.data.db.entity.WEATHER_LOCATION_ID
-import com.example.forecast.data.db.entity.WeatherLocation
+import com.example.forecast.data.database.entity.WEATHER_LOCATION_ID
+import com.example.forecast.data.database.entity.WeatherLocation
 
 @Dao
 interface WeatherLocationDao {

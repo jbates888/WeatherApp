@@ -7,7 +7,7 @@ import android.location.Location
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.example.forecast.data.db.entity.WeatherLocation
+import com.example.forecast.data.database.entity.WeatherLocation
 import com.example.forecast.internal.LocationPermissionNotGrantedException
 import com.example.forecast.internal.asDeferredAsync
 import kotlinx.coroutines.Deferred

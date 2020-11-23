@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toolbar
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -29,11 +29,9 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     private val viewModelFactory: CurrentWeatherViewModelFactory by instance()
     private lateinit var viewModel: CurrentWeatherViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.current_weather_fragment, container, false)
     }
 
@@ -78,34 +76,65 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             //set the background color based on the current weather
             if (it.weatherDescriptions[0] == "Sunny") {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
-            } else if (it.weatherDescriptions[0] == "Overcast" || it.weatherDescriptions[0] == "Cloudy" ) {
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
+                    ColorDrawable(
+                        Color.parseColor(
+                            "#673AB7"
+                        )
+                    )
+                )
+            } else if (it.weatherDescriptions[0] == "Overcast" || it.weatherDescriptions[0] == "Cloudy") {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#BDBDBD"))
-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
+                    ColorDrawable(
+                        Color.parseColor(
+                            "#673AB7"
+                        )
+                    )
+                )
             } else if (it.weatherDescriptions[0] == "Partly cloudy") {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
+                    ColorDrawable(
+                        Color.parseColor(
+                            "#673AB7"
+                        )
+                    )
+                )
             } else if (it.weatherDescriptions[0] == "Clear") {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#673AB7"))
-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
+                    ColorDrawable(
+                        Color.parseColor(
+                            "#673AB7"
+                        )
+                    )
+                )
             } else if (it.weatherDescriptions[0] == "Patchy rain nearby" ||
-                    it.weatherDescriptions[0] == "Patchy freezing drizzle nearby" ||
-                    it.weatherDescriptions[0] == "Thundery outbreaks in nearby" ||
-                    it.weatherDescriptions[0] == "Light drizzle" ||
-                    it.weatherDescriptions[0] == "Freezing drizzle" ||
-                    it.weatherDescriptions[0] == "Heavy freezing drizzle" ||
-                    it.weatherDescriptions[0] == "Patchy light rain" ||
-                    it.weatherDescriptions[0] == "Moderate rain at times" ||
-                    it.weatherDescriptions[0] == "Moderate rain" ||
-                    it.weatherDescriptions[0] == "Heavy rain at times" ||
-                    it.weatherDescriptions[0] == "Light freezing rain" ||
-                    it.weatherDescriptions[0] == "Light rain shower" ||
-                    it.weatherDescriptions[0] == "Moderate or heavy rain shower" ||
-                    it.weatherDescriptions[0] == "Torrential rain shower" ||
-                    it.weatherDescriptions[0] == "Patchy light rain in area with thunder" ||
-                    it.weatherDescriptions[0] == "Moderate or heavy rain in area with thunder") {
+                it.weatherDescriptions[0] == "Patchy freezing drizzle nearby" ||
+                it.weatherDescriptions[0] == "Thundery outbreaks in nearby" ||
+                it.weatherDescriptions[0] == "Light drizzle" ||
+                it.weatherDescriptions[0] == "Freezing drizzle" ||
+                it.weatherDescriptions[0] == "Heavy freezing drizzle" ||
+                it.weatherDescriptions[0] == "Patchy light rain" ||
+                it.weatherDescriptions[0] == "Moderate rain at times" ||
+                it.weatherDescriptions[0] == "Moderate rain" ||
+                it.weatherDescriptions[0] == "Heavy rain at times" ||
+                it.weatherDescriptions[0] == "Light freezing rain" ||
+                it.weatherDescriptions[0] == "Light rain shower" ||
+                it.weatherDescriptions[0] == "Moderate or heavy rain shower" ||
+                it.weatherDescriptions[0] == "Torrential rain shower" ||
+                it.weatherDescriptions[0] == "Patchy light rain in area with thunder" ||
+                it.weatherDescriptions[0] == "Moderate or heavy rain in area with thunder"
+            ) {
                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
+                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
+                    ColorDrawable(
+                        Color.parseColor(
+                            "#673AB7"
+                        )
+                    )
+                )
             }
 
             //load the current weather

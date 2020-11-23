@@ -14,6 +14,7 @@ import com.example.forecast.data.provider.UnitProviderImpl
 import com.example.forecast.data.repository.ForecastRepository
 import com.example.forecast.data.repository.ForecastRepositoryImpl
 import com.example.forecast.ui.weather.current.CurrentWeatherViewModelFactory
+import com.example.forecast.ui.weather.ratings.ratingsScreen.RatingsWeatherViewModelFactory
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
@@ -58,6 +59,10 @@ class ForecastApplication : Application(), KodeinAware {
         }
         bind() from provider {
             CurrentWeatherViewModelFactory(instance(), instance())
+        }
+
+        bind() from provider {
+            RatingsWeatherViewModelFactory(instance(), instance())
         }
     }
 

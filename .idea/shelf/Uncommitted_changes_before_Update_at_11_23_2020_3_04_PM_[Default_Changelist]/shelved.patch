@@ -1,0 +1,564 @@
+Index: app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.forecast.ui.weather.current\r\n\r\nimport android.annotation.SuppressLint\r\nimport android.graphics.Color\r\nimport android.graphics.drawable.ColorDrawable\r\nimport android.os.Bundle\r\nimport android.util.Log\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.Toolbar\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport androidx.lifecycle.Observer\r\nimport androidx.lifecycle.ViewModelProvider\r\nimport com.example.forecast.R\r\nimport com.example.forecast.internal.glide.GlideApp\r\nimport com.example.forecast.ui.base.ScopedFragment\r\nimport kotlinx.android.synthetic.main.current_weather_fragment.*\r\nimport kotlinx.coroutines.launch\r\nimport org.kodein.di.KodeinAware\r\nimport org.kodein.di.android.x.closestKodein\r\nimport org.kodein.di.generic.instance\r\nimport java.text.DecimalFormat\r\n\r\n\r\nclass CurrentWeatherFragment : ScopedFragment(), KodeinAware {\r\n\r\n    override val kodein by closestKodein()\r\n    private val viewModelFactory: CurrentWeatherViewModelFactory by instance()\r\n    private lateinit var viewModel: CurrentWeatherViewModel\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater,\r\n        container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View? {\r\n        return inflater.inflate(R.layout.current_weather_fragment, container, false)\r\n    }\r\n\r\n    override fun onActivityCreated(savedInstanceState: Bundle?) {\r\n        super.onActivityCreated(savedInstanceState)\r\n        viewModel = ViewModelProvider(this, viewModelFactory).get(CurrentWeatherViewModel::class.java)\r\n        bindUI()\r\n    }\r\n\r\n    @SuppressLint(\"FragmentLiveDataObserve\")\r\n    private fun bindUI() = launch {\r\n        val currentWeather = viewModel.weather.await()\r\n        val weatherLocation = viewModel.weatherLocation.await()\r\n\r\n        weatherLocation.observe(this@CurrentWeatherFragment, Observer { location ->\r\n            if (location == null) return@Observer\r\n\r\n            Log.d(\"location.name\", location.name)\r\n            Log.d(\"location.timezoneId\", location.timezoneId)\r\n            Log.d(\"location.country\", location.country)\r\n            Log.d(\"location.localtime\", location.localtime)\r\n            Log.d(\"location.region\", location.region)\r\n            Log.d(\"location.utcOffset\", location.utcOffset)\r\n            Log.d(\"location.id\", \"${location.id}\")\r\n            Log.d(\"location.lat\", \"${location.lat}\")\r\n            Log.d(\"location.localtimeEpoch\", \"${location.localtimeEpoch}\")\r\n            Log.d(\"location.lon\", \"${location.lon}\")\r\n            Log.d(\"location.zonedDateTime\", \"${location.zonedDateTime}\")\r\n\r\n            updateLocation(location.name)\r\n        })\r\n\r\n        currentWeather.observe(this@CurrentWeatherFragment, Observer {\r\n            if (it == null) return@Observer\r\n\r\n            updateTemperatures(it.temperature, it.feelslike)\r\n            updateCondition(it.weatherDescriptions[0])\r\n            updatePrecipitation(it.precip)\r\n            updateWind(it.windDir, it.windSpeed)\r\n            updateVisibility(it.visibility)\r\n\r\n            //set the background color based on the current weather\r\n            if (it.weatherDescriptions[0] == \"Sunny\") {\r\n                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor(\"#E1F5FE\"))\r\n                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(\"#673AB7\")))\r\n            } else if (it.weatherDescriptions[0] == \"Overcast\" || it.weatherDescriptions[0] == \"Cloudy\" ) {\r\n                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor(\"#BDBDBD\"))\r\n                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(\"#673AB7\")))\r\n            } else if (it.weatherDescriptions[0] == \"Partly cloudy\") {\r\n                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor(\"#E1F5FE\"))\r\n                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(\"#673AB7\")))\r\n            } else if (it.weatherDescriptions[0] == \"Clear\") {\r\n                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor(\"#673AB7\"))\r\n                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(\"#673AB7\")))\r\n            } else if (it.weatherDescriptions[0] == \"Patchy rain nearby\" ||\r\n                    it.weatherDescriptions[0] == \"Patchy freezing drizzle nearby\" ||\r\n                    it.weatherDescriptions[0] == \"Thundery outbreaks in nearby\" ||\r\n                    it.weatherDescriptions[0] == \"Light drizzle\" ||\r\n                    it.weatherDescriptions[0] == \"Freezing drizzle\" ||\r\n                    it.weatherDescriptions[0] == \"Heavy freezing drizzle\" ||\r\n                    it.weatherDescriptions[0] == \"Patchy light rain\" ||\r\n                    it.weatherDescriptions[0] == \"Moderate rain at times\" ||\r\n                    it.weatherDescriptions[0] == \"Moderate rain\" ||\r\n                    it.weatherDescriptions[0] == \"Heavy rain at times\" ||\r\n                    it.weatherDescriptions[0] == \"Light freezing rain\" ||\r\n                    it.weatherDescriptions[0] == \"Light rain shower\" ||\r\n                    it.weatherDescriptions[0] == \"Moderate or heavy rain shower\" ||\r\n                    it.weatherDescriptions[0] == \"Torrential rain shower\" ||\r\n                    it.weatherDescriptions[0] == \"Patchy light rain in area with thunder\" ||\r\n                    it.weatherDescriptions[0] == \"Moderate or heavy rain in area with thunder\") {\r\n                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor(\"#E1F5FE\"))\r\n                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor(\"#673AB7\")))\r\n            }\r\n\r\n            //load the current weather\r\n            GlideApp.with(this@CurrentWeatherFragment)\r\n                .load(it.weatherIcons[0])\r\n                .into(imageView_condition_icon)\r\n        })\r\n    }\r\n\r\n    private fun chooseLocalizedUnitAbbreviation(metric: String, imperial: String): String {\r\n        return if (viewModel.isMetric) metric else imperial\r\n    }\r\n\r\n    private fun updateLocation(location: String) {\r\n        (activity as? AppCompatActivity)?.supportActionBar?.title = location\r\n    }\r\n\r\n    private fun updateTemperatures(temperature: Double, feelsLikeTemp: Double) {\r\n        val unitAbbreviation = chooseLocalizedUnitAbbreviation(\"°C\", \"°F\")\r\n        if (unitAbbreviation == \"°C\") {\r\n            val metricTemperatureText = \"$temperature$unitAbbreviation\"\r\n            textView_temperature.text = metricTemperatureText\r\n            val metricFeelsLikeTemperatureText = \"Feels Like $feelsLikeTemp$unitAbbreviation\"\r\n            textView_feels_like_temperature.text = metricFeelsLikeTemperatureText\r\n        } else if (unitAbbreviation == \"°F\") {\r\n            val tempInImperial = (temperature * 9 / 5) + 32\r\n            val imperialTemperatureText = \"${decimalFormat.format(tempInImperial)}$unitAbbreviation\"\r\n            textView_temperature.text = imperialTemperatureText\r\n            val imperialFeelsLikeTemperatureText =\r\n                \"Feels Like ${(feelsLikeTemp * 9 / 5) + 32}$unitAbbreviation\"\r\n            textView_feels_like_temperature.text = imperialFeelsLikeTemperatureText\r\n        }\r\n    }\r\n\r\n    private fun updateCondition(condition: String) {\r\n        textView_condition.text = condition\r\n    }\r\n\r\n    private fun updatePrecipitation(precipitationVolume: Double) {\r\n        val unitAbbreviation = chooseLocalizedUnitAbbreviation(\"mm\", \"in\")\r\n        if (unitAbbreviation == \"mm\") {\r\n            val metricPrecipitationText = \"Precipitation: $precipitationVolume $unitAbbreviation\"\r\n            textView_precipitation.text = metricPrecipitationText\r\n        } else if (unitAbbreviation == \"in\") {\r\n            val precipitationVolumeImperial = precipitationVolume / 25.4\r\n            val imperialPrecipitationText =\r\n                \"Precipitation: ${decimalFormat.format(precipitationVolumeImperial)} $unitAbbreviation\"\r\n            textView_precipitation.text = imperialPrecipitationText\r\n        }\r\n    }\r\n\r\n    private fun updateWind(windDirection: String, windSpeed: Double) {\r\n        val unitAbbreviation = chooseLocalizedUnitAbbreviation(\"kph\", \"mph\")\r\n        if (unitAbbreviation == \"kph\") {\r\n            val metricWindText = \"Wind: $windDirection, $windSpeed $unitAbbreviation\"\r\n            textView_wind.text = metricWindText\r\n        } else if (unitAbbreviation == \"mph\") {\r\n            val windSpeedImperial = windSpeed / 1.609\r\n            val imperialWindText =\r\n                \"Wind: $windDirection, ${decimalFormat.format(windSpeedImperial)} $unitAbbreviation\"\r\n            textView_wind.text = imperialWindText\r\n        }\r\n    }\r\n\r\n    private fun updateVisibility(visibilityDistance: Double) {\r\n        val unitAbbreviation = chooseLocalizedUnitAbbreviation(\"km\", \"mi.\")\r\n        if (unitAbbreviation == \"km\") {\r\n            val metricVisibilityText = \"Visibility: $visibilityDistance $unitAbbreviation\"\r\n            textView_visibility.text = metricVisibilityText\r\n        } else if (unitAbbreviation == \"mi.\") {\r\n            val visibilityDistanceImperial = visibilityDistance / 1.609\r\n            val imperialVisibilityText =\r\n                \"Visibility: ${decimalFormat.format(visibilityDistanceImperial)} $unitAbbreviation\"\r\n            textView_visibility.text = imperialVisibilityText\r\n        }\r\n    }\r\n\r\n    companion object {\r\n        val decimalFormat = DecimalFormat(\"0.00\")\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherFragment.kt	(revision 8be4961ba55d2a16b43c5b1d363206d90faae79b)
++++ app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherFragment.kt	(date 1606164875042)
+@@ -8,7 +8,7 @@
+ import android.view.LayoutInflater
+ import android.view.View
+ import android.view.ViewGroup
+-import android.widget.Toolbar
++import android.widget.ProgressBar
+ import androidx.appcompat.app.AppCompatActivity
+ import androidx.lifecycle.Observer
+ import androidx.lifecycle.ViewModelProvider
+@@ -29,11 +29,9 @@
+     private val viewModelFactory: CurrentWeatherViewModelFactory by instance()
+     private lateinit var viewModel: CurrentWeatherViewModel
+ 
+-    override fun onCreateView(
+-        inflater: LayoutInflater,
+-        container: ViewGroup?,
+-        savedInstanceState: Bundle?
+-    ): View? {
++
++
++    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+         return inflater.inflate(R.layout.current_weather_fragment, container, false)
+     }
+ 
+@@ -78,34 +76,65 @@
+             //set the background color based on the current weather
+             if (it.weatherDescriptions[0] == "Sunny") {
+                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
+-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
+-            } else if (it.weatherDescriptions[0] == "Overcast" || it.weatherDescriptions[0] == "Cloudy" ) {
++                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
++                    ColorDrawable(
++                        Color.parseColor(
++                            "#673AB7"
++                        )
++                    )
++                )
++            } else if (it.weatherDescriptions[0] == "Overcast" || it.weatherDescriptions[0] == "Cloudy") {
+                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#BDBDBD"))
+-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
++                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
++                    ColorDrawable(
++                        Color.parseColor(
++                            "#673AB7"
++                        )
++                    )
++                )
+             } else if (it.weatherDescriptions[0] == "Partly cloudy") {
+                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
+-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
++                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
++                    ColorDrawable(
++                        Color.parseColor(
++                            "#673AB7"
++                        )
++                    )
++                )
+             } else if (it.weatherDescriptions[0] == "Clear") {
+                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#673AB7"))
+-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
++                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
++                    ColorDrawable(
++                        Color.parseColor(
++                            "#673AB7"
++                        )
++                    )
++                )
+             } else if (it.weatherDescriptions[0] == "Patchy rain nearby" ||
+-                    it.weatherDescriptions[0] == "Patchy freezing drizzle nearby" ||
+-                    it.weatherDescriptions[0] == "Thundery outbreaks in nearby" ||
+-                    it.weatherDescriptions[0] == "Light drizzle" ||
+-                    it.weatherDescriptions[0] == "Freezing drizzle" ||
+-                    it.weatherDescriptions[0] == "Heavy freezing drizzle" ||
+-                    it.weatherDescriptions[0] == "Patchy light rain" ||
+-                    it.weatherDescriptions[0] == "Moderate rain at times" ||
+-                    it.weatherDescriptions[0] == "Moderate rain" ||
+-                    it.weatherDescriptions[0] == "Heavy rain at times" ||
+-                    it.weatherDescriptions[0] == "Light freezing rain" ||
+-                    it.weatherDescriptions[0] == "Light rain shower" ||
+-                    it.weatherDescriptions[0] == "Moderate or heavy rain shower" ||
+-                    it.weatherDescriptions[0] == "Torrential rain shower" ||
+-                    it.weatherDescriptions[0] == "Patchy light rain in area with thunder" ||
+-                    it.weatherDescriptions[0] == "Moderate or heavy rain in area with thunder") {
++                it.weatherDescriptions[0] == "Patchy freezing drizzle nearby" ||
++                it.weatherDescriptions[0] == "Thundery outbreaks in nearby" ||
++                it.weatherDescriptions[0] == "Light drizzle" ||
++                it.weatherDescriptions[0] == "Freezing drizzle" ||
++                it.weatherDescriptions[0] == "Heavy freezing drizzle" ||
++                it.weatherDescriptions[0] == "Patchy light rain" ||
++                it.weatherDescriptions[0] == "Moderate rain at times" ||
++                it.weatherDescriptions[0] == "Moderate rain" ||
++                it.weatherDescriptions[0] == "Heavy rain at times" ||
++                it.weatherDescriptions[0] == "Light freezing rain" ||
++                it.weatherDescriptions[0] == "Light rain shower" ||
++                it.weatherDescriptions[0] == "Moderate or heavy rain shower" ||
++                it.weatherDescriptions[0] == "Torrential rain shower" ||
++                it.weatherDescriptions[0] == "Patchy light rain in area with thunder" ||
++                it.weatherDescriptions[0] == "Moderate or heavy rain in area with thunder"
++            ) {
+                 this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#E1F5FE"))
+-                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#673AB7")))
++                (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
++                    ColorDrawable(
++                        Color.parseColor(
++                            "#673AB7"
++                        )
++                    )
++                )
+             }
+ 
+             //load the current weather
+Index: app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.forecast.ui.weather.ratings.ratingsScreen\r\n\r\nimport android.os.Bundle\r\nimport androidx.fragment.app.Fragment\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport androidx.lifecycle.ViewModelProvider\r\n\r\nimport com.example.forecast.R\r\n\r\nclass RatingsWeatherFragment : Fragment() {\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View? {\r\n        return inflater.inflate(R.layout.ratings_weather_fragment, container, false)\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherFragment.kt	(revision 8be4961ba55d2a16b43c5b1d363206d90faae79b)
++++ app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherFragment.kt	(date 1606164875054)
+@@ -1,20 +1,191 @@
+ package com.example.forecast.ui.weather.ratings.ratingsScreen
+ 
++import android.annotation.SuppressLint
++import android.graphics.Color
++import android.graphics.drawable.ColorDrawable
+ import android.os.Bundle
+-import androidx.fragment.app.Fragment
++import android.util.Log
+ import android.view.LayoutInflater
+ import android.view.View
+ import android.view.ViewGroup
++import androidx.appcompat.app.AppCompatActivity
++import androidx.fragment.app.Fragment
++import androidx.lifecycle.Observer
+ import androidx.lifecycle.ViewModelProvider
+-
+ import com.example.forecast.R
++import kotlinx.coroutines.launch
++import com.example.forecast.internal.glide.GlideApp
++import com.example.forecast.ui.base.ScopedFragment
++import kotlinx.android.synthetic.main.ratings_weather_fragment.*
++import org.kodein.di.generic.instance
++import org.kodein.di.KodeinAware
++import org.kodein.di.android.x.closestKodein
++
++class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
+ 
+-class RatingsWeatherFragment : Fragment() {
+-    override fun onCreateView(
+-        inflater: LayoutInflater, container: ViewGroup?,
+-        savedInstanceState: Bundle?
+-    ): View? {
++    override val kodein by closestKodein()
++    private val viewModelFactory: RatingsWeatherViewModelFactory by instance()
++    private lateinit var viewModel: RatingsWeatherViewModel
++
++    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+         return inflater.inflate(R.layout.ratings_weather_fragment, container, false)
+     }
+ 
++    override fun onActivityCreated(savedInstanceState: Bundle?) {
++        super.onActivityCreated(savedInstanceState)
++        viewModel = ViewModelProvider(this, viewModelFactory).get(RatingsWeatherViewModel::class.java)
++        bindUI()
++    }
++
++    @SuppressLint("FragmentLiveDataObserve")
++    private fun bindUI() = launch {
++        val currentWeather = viewModel.weather.await()
++        val weatherLocation = viewModel.weatherLocation.await()
++
++        weatherLocation.observe(this@RatingsWeatherFragment, Observer { location ->
++            if (location == null) return@Observer
++
++            Log.d("location.name", location.name)
++            Log.d("location.timezoneId", location.timezoneId)
++            Log.d("location.country", location.country)
++            Log.d("location.localtime", location.localtime)
++            Log.d("location.region", location.region)
++            Log.d("location.utcOffset", location.utcOffset)
++            Log.d("location.id", "${location.id}")
++            Log.d("location.lat", "${location.lat}")
++            Log.d("location.localtimeEpoch", "${location.localtimeEpoch}")
++            Log.d("location.lon", "${location.lon}")
++            Log.d("location.zonedDateTime", "${location.zonedDateTime}")
++
++            updateLocation(location.name)
++        })
++
++        currentWeather.observe(this@RatingsWeatherFragment, Observer {
++            if (it == null) return@Observer
++            updateRunningRating(it.temperature, it.precip, it.windSpeed)
++            updateBikingRating(it.temperature, it.precip, it.windSpeed)
++            updateHikingRating(it.temperature, it.precip, it.windSpeed)
++            updateGolfingRating(it.temperature, it.precip, it.windSpeed)
++            updateSkiingRating(it.temperature, it.precip, it.windSpeed)
++            updateCampingRating(it.temperature, it.precip, it.windSpeed)
++            updateSwimmingRating(it.temperature, it.precip, it.windSpeed)
++        })
++    }
++
++    private fun updateRunningRating(temp: Double, precip: Double, wind: Double){
++        var runRating = 0
++        if(temp > 9 && temp <= 35){
++            runRating += 50;
++        }
++        if(precip == 0.0){
++            runRating += 25;
++        }
++        if(wind < 8){
++            runRating += 25;
++        }
++
++        RunProgressBar.max = 100;
++        RunProgressBar.progress = runRating
++    }
++
++    private fun updateBikingRating(temp: Double, precip: Double, wind: Double){
++        var bikeRating = 0
++        if(temp > 9 && temp <= 35){
++            bikeRating += 50;
++        }
++        if(precip == 0.0){
++            bikeRating += 25;
++        }
++        if(wind < 5){
++            bikeRating += 25;
++        }
++
++        BikeProgressBar.max = 100;
++        BikeProgressBar.progress = bikeRating
++    }
++
++    private fun updateHikingRating(temp: Double, precip: Double, wind: Double){
++        var hikeRating = 0
++        if(temp > 10 && temp <= 25){
++            hikeRating += 50;
++        }
++        if(precip == 0.0){
++            hikeRating += 25;
++        }
++        if(wind < 10){
++            hikeRating += 25;
++        }
++
++        HikeProgressBar.max = 100;
++        HikeProgressBar.progress = hikeRating
++    }
++
++    private fun updateGolfingRating(temp: Double, precip: Double, wind: Double){
++        var golfRating = 0
++        if(temp > 11 && temp <= 30){
++            golfRating += 50;
++        }
++        if(precip == 0.0){
++            golfRating += 25;
++        }
++        if(wind < 3){
++            golfRating += 25;
++        }
++
++        GolfProgressBar.max = 100;
++        GolfProgressBar.progress = golfRating
++    }
++
++    private fun updateSkiingRating(temp: Double, precip: Double, wind: Double){
++        var skiRating = 0
++        if(temp > -25 && temp <= 0){
++            skiRating += 50;
++        }
++        if(precip > 1.0){
++            skiRating += 25;
++        }
++        if(wind < 5){
++            skiRating += 25;
++        }
++
++        SkiProgressBar.max = 100;
++        SkiProgressBar.progress = skiRating
++    }
++
++    private fun updateCampingRating(temp: Double, precip: Double, wind: Double){
++        var campRating = 0
++        if(temp > 9 && temp <= 35){
++            campRating += 50;
++        }
++        if(precip == 0.0){
++            campRating += 25;
++        }
++        if(wind < 10){
++            campRating += 25;
++        }
++
++        CampProgressBar.max = 100;
++        CampProgressBar.progress = campRating
++    }
++
++    private fun updateSwimmingRating(temp: Double, precip: Double, wind: Double){
++        var swimRating = 0
++        if(temp > 23 && temp <= 38){
++            swimRating += 50;
++        }
++        if(precip == 0.0){
++            swimRating += 25;
++        }
++        if(wind < 10){
++            swimRating += 25;
++        }
++
++        SwimProgressBar.max = 100;
++        SwimProgressBar.progress = swimRating
++    }
++
++    private fun updateLocation(location: String) {
++        (activity as? AppCompatActivity)?.supportActionBar?.title = location
++    }
++
+ }
+Index: app/src/main/res/layout/ratings_weather_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".ui.weather.current.CurrentWeatherFragment\">\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"32dp\"\r\n        android:text=\"Activity Ratings\"\r\n        android:textSize=\"36sp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView2\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"64dp\"\r\n        android:text=\"Jogging:\"\r\n        android:textSize=\"18sp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView3\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"24dp\"\r\n        android:text=\"Biking: \"\r\n        android:textSize=\"18sp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView2\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView4\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"24dp\"\r\n        android:text=\"Hiking: \"\r\n        android:textSize=\"18sp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView3\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView5\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"24dp\"\r\n        android:text=\"Golfing: \"\r\n        android:textSize=\"18sp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView4\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView6\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"24dp\"\r\n        android:text=\"Skiing: \"\r\n        android:textSize=\"18sp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView5\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView7\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"24dp\"\r\n        android:text=\"Camping: \"\r\n        android:textSize=\"18sp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView6\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView8\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"24dp\"\r\n        android:text=\"Swimming: \"\r\n        android:textSize=\"18sp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView7\" />\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/ratings_weather_fragment.xml	(revision 8be4961ba55d2a16b43c5b1d363206d90faae79b)
++++ app/src/main/res/layout/ratings_weather_fragment.xml	(date 1606164875064)
+@@ -94,4 +94,84 @@
+         android:textSize="18sp"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/textView7" />
++
++    <ProgressBar
++        android:id="@+id/RunProgressBar"
++        style="?android:attr/progressBarStyleHorizontal"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_marginEnd="24dp"
++        android:visibility="visible"
++        app:layout_constraintBottom_toBottomOf="@+id/textView2"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="@+id/BikeProgressBar"
++        app:layout_constraintTop_toTopOf="@+id/textView2" />
++
++    <ProgressBar
++        android:id="@+id/BikeProgressBar"
++        style="?android:attr/progressBarStyleHorizontal"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_marginEnd="24dp"
++        app:layout_constraintBottom_toBottomOf="@+id/textView3"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="@+id/HikeProgressBar"
++        app:layout_constraintTop_toTopOf="@+id/textView3" />
++
++    <ProgressBar
++        android:id="@+id/HikeProgressBar"
++        style="?android:attr/progressBarStyleHorizontal"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_marginEnd="24dp"
++        app:layout_constraintBottom_toBottomOf="@+id/textView4"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="@+id/GolfProgressBar"
++        app:layout_constraintTop_toTopOf="@+id/textView4" />
++
++    <ProgressBar
++        android:id="@+id/GolfProgressBar"
++        style="?android:attr/progressBarStyleHorizontal"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_marginEnd="24dp"
++        app:layout_constraintBottom_toBottomOf="@+id/textView5"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="@+id/SkiProgressBar"
++        app:layout_constraintTop_toTopOf="@+id/textView5" />
++
++    <ProgressBar
++        android:id="@+id/SkiProgressBar"
++        style="?android:attr/progressBarStyleHorizontal"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_marginEnd="24dp"
++        app:layout_constraintBottom_toBottomOf="@+id/textView6"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="@+id/CampProgressBar"
++        app:layout_constraintTop_toTopOf="@+id/textView6" />
++
++    <ProgressBar
++        android:id="@+id/CampProgressBar"
++        style="?android:attr/progressBarStyleHorizontal"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_marginEnd="24dp"
++        app:layout_constraintBottom_toBottomOf="@+id/textView7"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="@+id/SwimProgressBar"
++        app:layout_constraintTop_toTopOf="@+id/textView7" />
++
++    <ProgressBar
++        android:id="@+id/SwimProgressBar"
++        style="?android:attr/progressBarStyleHorizontal"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_marginStart="16dp"
++        android:layout_marginEnd="24dp"
++        app:layout_constraintBottom_toBottomOf="@+id/textView8"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toEndOf="@+id/textView8"
++        app:layout_constraintTop_toTopOf="@+id/textView8" />
++
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/forecast/ui/base/ScopedFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.forecast.ui.base\r\n\r\nimport android.os.Bundle\r\nimport androidx.fragment.app.Fragment\r\nimport kotlinx.coroutines.CoroutineScope\r\nimport kotlinx.coroutines.Dispatchers\r\nimport kotlinx.coroutines.Job\r\nimport kotlin.coroutines.CoroutineContext\r\n\r\nabstract class ScopedFragment : Fragment(), CoroutineScope {\r\n\r\n    private lateinit var job: Job\r\n\r\n    override val coroutineContext: CoroutineContext\r\n        get() = job + Dispatchers.Main\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n\r\n        job = Job()\r\n    }\r\n\r\n    override fun onDestroy() {\r\n        super.onDestroy()\r\n\r\n        job.cancel()\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/forecast/ui/base/ScopedFragment.kt	(revision 8be4961ba55d2a16b43c5b1d363206d90faae79b)
++++ app/src/main/java/com/example/forecast/ui/base/ScopedFragment.kt	(date 1606164875073)
+@@ -9,6 +9,7 @@
+ 
+ abstract class ScopedFragment : Fragment(), CoroutineScope {
+ 
++
+     private lateinit var job: Job
+ 
+     override val coroutineContext: CoroutineContext
+Index: app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherViewModelFactory.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherViewModelFactory.kt	(date 1606164875101)
++++ app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherViewModelFactory.kt	(date 1606164875101)
+@@ -0,0 +1,16 @@
++package com.example.forecast.ui.weather.ratings.ratingsScreen
++
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.ViewModelProvider
++import com.example.forecast.data.provider.UnitProvider
++import com.example.forecast.data.repository.ForecastRepository
++import com.example.forecast.ui.weather.current.CurrentWeatherViewModel
++
++class RatingsWeatherViewModelFactory(private val forecastRepository: ForecastRepository, private val unitProvider: UnitProvider
++) : ViewModelProvider.NewInstanceFactory() {
++
++    @Suppress("UNCHECKED_CAST")
++    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
++        return RatingsWeatherViewModel(forecastRepository, unitProvider) as T
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherViewModelFactory.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.forecast.ui.weather.current\r\n\r\nimport androidx.lifecycle.ViewModel\r\nimport androidx.lifecycle.ViewModelProvider\r\nimport com.example.forecast.data.provider.UnitProvider\r\nimport com.example.forecast.data.repository.ForecastRepository\r\n\r\nclass CurrentWeatherViewModelFactory(\r\n    private val forecastRepository: ForecastRepository,\r\n    private val unitProvider: UnitProvider\r\n) : ViewModelProvider.NewInstanceFactory() {\r\n\r\n    @Suppress(\"UNCHECKED_CAST\")\r\n    override fun <T : ViewModel?> create(modelClass: Class<T>): T {\r\n        return CurrentWeatherViewModel(forecastRepository, unitProvider) as T\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherViewModelFactory.kt	(revision 8be4961ba55d2a16b43c5b1d363206d90faae79b)
++++ app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherViewModelFactory.kt	(date 1606164875082)
+@@ -5,9 +5,7 @@
+ import com.example.forecast.data.provider.UnitProvider
+ import com.example.forecast.data.repository.ForecastRepository
+ 
+-class CurrentWeatherViewModelFactory(
+-    private val forecastRepository: ForecastRepository,
+-    private val unitProvider: UnitProvider
++class CurrentWeatherViewModelFactory(private val forecastRepository: ForecastRepository, private val unitProvider: UnitProvider
+ ) : ViewModelProvider.NewInstanceFactory() {
+ 
+     @Suppress("UNCHECKED_CAST")
+Index: app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.forecast.ui.weather.current\r\n\r\nimport androidx.lifecycle.ViewModel\r\nimport com.example.forecast.data.provider.UnitProvider\r\nimport com.example.forecast.data.repository.ForecastRepository\r\nimport com.example.forecast.internal.UnitSystem\r\nimport com.example.forecast.internal.lazyDeferred\r\n\r\nclass CurrentWeatherViewModel(\r\n    private val forecastRepository: ForecastRepository,\r\n    unitProvider: UnitProvider\r\n) : ViewModel() {\r\n    private val unitSystem = unitProvider.getUnitSystem()\r\n\r\n    val isMetric: Boolean\r\n        get() = unitSystem == UnitSystem.METRIC\r\n\r\n    val weather by lazyDeferred {\r\n        forecastRepository.getCurrentWeather()\r\n    }\r\n\r\n    val weatherLocation by lazyDeferred {\r\n        forecastRepository.getWeatherLocation()\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherViewModel.kt	(revision 8be4961ba55d2a16b43c5b1d363206d90faae79b)
++++ app/src/main/java/com/example/forecast/ui/weather/current/CurrentWeatherViewModel.kt	(date 1606164875091)
+@@ -6,10 +6,7 @@
+ import com.example.forecast.internal.UnitSystem
+ import com.example.forecast.internal.lazyDeferred
+ 
+-class CurrentWeatherViewModel(
+-    private val forecastRepository: ForecastRepository,
+-    unitProvider: UnitProvider
+-) : ViewModel() {
++class CurrentWeatherViewModel(private val forecastRepository: ForecastRepository, unitProvider: UnitProvider) : ViewModel() {
+     private val unitSystem = unitProvider.getUnitSystem()
+ 
+     val isMetric: Boolean
+Index: app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherViewModel.kt	(date 1606164875108)
++++ app/src/main/java/com/example/forecast/ui/weather/ratings/ratingsScreen/RatingsWeatherViewModel.kt	(date 1606164875108)
+@@ -0,0 +1,22 @@
++package com.example.forecast.ui.weather.ratings.ratingsScreen
++
++import androidx.lifecycle.ViewModel
++import com.example.forecast.data.provider.UnitProvider
++import com.example.forecast.data.repository.ForecastRepository
++import com.example.forecast.internal.UnitSystem
++import com.example.forecast.internal.lazyDeferred
++
++class RatingsWeatherViewModel(private val forecastRepository: ForecastRepository, unitProvider: UnitProvider) : ViewModel() {
++    private val unitSystem = unitProvider.getUnitSystem()
++
++    val isMetric: Boolean
++        get() = unitSystem == UnitSystem.METRIC
++
++    val weather by lazyDeferred {
++        forecastRepository.getCurrentWeather()
++    }
++
++    val weatherLocation by lazyDeferred {
++        forecastRepository.getWeatherLocation()
++    }
++}
+Index: app/src/main/java/com/example/forecast/ForecastApplication.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.forecast\r\n\r\nimport android.app.Application\r\nimport android.content.Context\r\nimport androidx.preference.PreferenceManager\r\nimport com.google.android.gms.location.LocationServices\r\nimport com.jakewharton.threetenabp.AndroidThreeTen\r\nimport com.example.forecast.data.database.database.ForecastDatabase\r\nimport com.example.forecast.data.api.*\r\nimport com.example.forecast.data.provider.LocationProvider\r\nimport com.example.forecast.data.provider.LocationProviderImpl\r\nimport com.example.forecast.data.provider.UnitProvider\r\nimport com.example.forecast.data.provider.UnitProviderImpl\r\nimport com.example.forecast.data.repository.ForecastRepository\r\nimport com.example.forecast.data.repository.ForecastRepositoryImpl\r\nimport com.example.forecast.ui.weather.current.CurrentWeatherViewModelFactory\r\nimport org.kodein.di.Kodein\r\nimport org.kodein.di.KodeinAware\r\nimport org.kodein.di.android.x.androidXModule\r\nimport org.kodein.di.generic.bind\r\nimport org.kodein.di.generic.instance\r\nimport org.kodein.di.generic.provider\r\nimport org.kodein.di.generic.singleton\r\n\r\nclass ForecastApplication : Application(), KodeinAware {\r\n    override val kodein = Kodein.lazy {\r\n        import(androidXModule(this@ForecastApplication))\r\n\r\n        bind() from singleton {\r\n            ForecastDatabase(instance())\r\n        }\r\n        bind() from singleton {\r\n            instance<ForecastDatabase>().currentWeatherDao()\r\n        }\r\n        bind() from singleton {\r\n            instance<ForecastDatabase>().weatherLocationDao()\r\n        }\r\n        bind<ConnectivityInterceptor>() with singleton {\r\n            ConnectivityInterceptorImpl(instance())\r\n        }\r\n        bind() from singleton {\r\n            WeatherStackApiService(instance())\r\n        }\r\n        bind<WeatherNetworkDataSource>() with singleton {\r\n            WeatherNetworkDataSourceImpl(instance())\r\n        }\r\n        bind() from provider {\r\n            LocationServices.getFusedLocationProviderClient(instance<Context>())\r\n        }\r\n        bind<LocationProvider>() with singleton {\r\n            LocationProviderImpl(instance(), instance())\r\n        }\r\n        bind<ForecastRepository>() with singleton {\r\n            ForecastRepositoryImpl(instance(), instance(), instance(), instance())\r\n        }\r\n        bind<UnitProvider>() with singleton {\r\n            UnitProviderImpl(instance())\r\n        }\r\n        bind() from provider {\r\n            CurrentWeatherViewModelFactory(instance(), instance())\r\n        }\r\n    }\r\n\r\n    override fun onCreate() {\r\n        super.onCreate()\r\n\r\n        AndroidThreeTen.init(this)\r\n        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/forecast/ForecastApplication.kt	(revision 8be4961ba55d2a16b43c5b1d363206d90faae79b)
++++ app/src/main/java/com/example/forecast/ForecastApplication.kt	(date 1606164875128)
+@@ -14,6 +14,7 @@
+ import com.example.forecast.data.repository.ForecastRepository
+ import com.example.forecast.data.repository.ForecastRepositoryImpl
+ import com.example.forecast.ui.weather.current.CurrentWeatherViewModelFactory
++import com.example.forecast.ui.weather.ratings.ratingsScreen.RatingsWeatherViewModelFactory
+ import org.kodein.di.Kodein
+ import org.kodein.di.KodeinAware
+ import org.kodein.di.android.x.androidXModule
+@@ -59,6 +60,10 @@
+         bind() from provider {
+             CurrentWeatherViewModelFactory(instance(), instance())
+         }
++
++        bind() from provider {
++            RatingsWeatherViewModelFactory(instance(), instance())
++        }
+     }
+ 
+     override fun onCreate() {

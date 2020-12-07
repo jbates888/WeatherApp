@@ -1,8 +1,10 @@
 package com.example.forecast.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -15,6 +17,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.example.forecast.R
+import com.example.forecast.R.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -35,10 +38,16 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(layout.activity_main)
         setSupportActionBar(toolbar)
 
+        val settings : Boolean = intent.getBooleanExtra("Settings", false)
+
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+
+        if(settings) navController.navigate(R.id.settingsFragment)
+
+        Log.d("Set", settings.toString())
 
         bottom_nav.setupWithNavController(navController)
 

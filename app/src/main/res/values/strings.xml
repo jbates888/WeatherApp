@@ -2,4 +2,7 @@
     <string name="app_name">Forecast</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="city">Enter a Location</string>
+    <string name="search">Search</string>
+    <string name="description">Home screen search bar widget</string>
 </resources>

@@ -8,10 +8,13 @@ import com.example.forecast.data.database.entity.CurrentWeatherEntry
 import com.example.forecast.data.database.entity.WeatherLocation
 import com.example.forecast.internal.Converters
 
+/*
+ * Class for data base to keep recent weather location loaded in the app, avoids extra api calls
+ */
 @Database(entities = [CurrentWeatherEntry::class, WeatherLocation::class], version = 1)
 @TypeConverters(value = [(Converters::class)])
 abstract class ForecastDatabase : RoomDatabase() {
-
+    //create both of the Daos here
     abstract fun currentWeatherDao(): CurrentWeatherDao
     abstract fun weatherLocationDao(): WeatherLocationDao
 
@@ -24,11 +27,7 @@ abstract class ForecastDatabase : RoomDatabase() {
             instance ?: buildDatabase(context).also { instance = it }
         }
 
-        private fun buildDatabase(context: Context) =
-            Room.databaseBuilder(
-                context.applicationContext,
-                ForecastDatabase::class.java,
-                "forecast.db"
-            ).build()
+        //build the database
+        private fun buildDatabase(context: Context) = Room.databaseBuilder(context.applicationContext, ForecastDatabase::class.java, "forecast.db").build()
     }
 }

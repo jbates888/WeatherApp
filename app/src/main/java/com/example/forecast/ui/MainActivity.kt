@@ -23,85 +23,61 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 
+/*
+ * Main activity
+ */
 class MainActivity : AppCompatActivity(), KodeinAware {
-
     override val kodein by closestKodein()
+    private lateinit var navController: NavController
     private val fusedLocationProviderClient: FusedLocationProviderClient by instance()
+    private val locationCallback = object : LocationCallback(){
 
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(p0: LocationResult?) {
-            super.onLocationResult(p0)
-        }
     }
 
-    private lateinit var navController: NavController
-
+    //When activity is created
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_main)
         setSupportActionBar(toolbar)
-
+        //set up intent to go to settings screen
         val settings : Boolean = intent.getBooleanExtra("Settings", false)
-
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
-
+        //set up the nav controller for navigating fragments
+        navController = Navigation.findNavController(this, R.id.nav_fragment)
         if(settings) navController.navigate(R.id.settingsFragment)
-
-        Log.d("Set", settings.toString())
-
-        bottom_nav.setupWithNavController(navController)
-
+        //set bottom nav menu
+        nav.setupWithNavController(navController)
         NavigationUI.setupActionBarWithNavController(this, navController)
-
-        requestLocationPermission()
-
+        //request the user to use their current location
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), MY_PERMISSION_ACCESS_LOCATION)
         if (hasLocationPermission()) {
-            bindLocationManager()
+            LifecycleBoundLocationManager(this, fusedLocationProviderClient, locationCallback)
         }
     }
 
-    private fun bindLocationManager() {
-        LifecycleBoundLocationManager(
-            this,
-            fusedLocationProviderClient,
-            locationCallback
-        )
+    // when location is requested form the user
+    override fun onRequestPermissionsResult(request: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (request == MY_PERMISSION_ACCESS_LOCATION) {
+            //if the user said yes, set the lifecycle
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                LifecycleBoundLocationManager(this, fusedLocationProviderClient, locationCallback)
+            }
+            //if the user says no, tell them to turn on permission in the settings
+            else {
+                Toast.makeText(this, "In settings, allow this app to use your location", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
-
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, null)
     }
-
-    private fun hasLocationPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestLocationPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            MY_PERMISSION_ACCESS_LOCATION
-        )
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == MY_PERMISSION_ACCESS_LOCATION) {
-            if (grantResults.isNotEmpty() &&
-                grantResults[0] == PackageManager.PERMISSION_GRANTED
-            )
-                bindLocationManager()
-            else
-                Toast.makeText(this, "Please Allow the location permission", Toast.LENGTH_SHORT)
-                    .show()
-        }
-    }
-
     companion object {
         const val MY_PERMISSION_ACCESS_LOCATION = 12
     }
+
+    //check if user has given permission for location services
+    private fun hasLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+
 }

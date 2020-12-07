@@ -9,6 +9,9 @@ import org.threeten.bp.ZonedDateTime
 
 const val WEATHER_LOCATION_ID = 0
 
+/*
+ * Class which handles getting the weather from the correct location
+ */
 @Entity(tableName = "weather_location")
 data class WeatherLocation(
     val name: String,

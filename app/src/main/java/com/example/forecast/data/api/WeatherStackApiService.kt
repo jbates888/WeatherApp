@@ -10,31 +10,30 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+//api key keep private
 const val API_KEY = "5b2f769e9296b37bd27ac5ef258420bf"
 
 //http://api.weatherstack.com/current?access_key=5b2f769e9296b37bd27ac5ef258420bf&query=Rawalpindi&lang=en
 
+/*
+ * Weather stack API interface (From weather stack documentation)
+ */
 interface WeatherStackApiService {
 
     @GET("current")
-    fun getCurrentWeatherAsync(
-        @Query("query") location: String,
-        @Query("lang") languageCode: String = "en"
-    ): Deferred<CurrentWeatherResponse>
+    fun getCurrentWeatherAsync(@Query("query") location: String, @Query("lang") languageCode: String = "en"): Deferred<CurrentWeatherResponse>
 
+    //object takes in the interceptor
     companion object {
-        operator fun invoke(
-            connectivityInterceptor: ConnectivityInterceptor
-        ): WeatherStackApiService {
+        operator fun invoke(connectivityInterceptor: ConnectivityInterceptor): WeatherStackApiService {
             val requestInterceptor = Interceptor {
+                //get the request url
                 val url = it.request()
                     .url()
                     .newBuilder()
-                    .addQueryParameter("access_key",
-                        API_KEY
-                    )
+                    .addQueryParameter("access_key", API_KEY)
                     .build()
-
+                //build the request with the url we just made above
                 val request = it.request()
                     .newBuilder()
                     .url(url)
@@ -47,6 +46,7 @@ interface WeatherStackApiService {
                 .addInterceptor(connectivityInterceptor)
                 .build()
 
+            //use retrofit to build call
             return Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("http://api.weatherstack.com/")

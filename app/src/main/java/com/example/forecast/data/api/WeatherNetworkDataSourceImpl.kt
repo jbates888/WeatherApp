@@ -4,25 +4,21 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.forecast.data.api.response.CurrentWeatherResponse
-import com.example.forecast.internal.NoConnectivityException
 
-class WeatherNetworkDataSourceImpl(
-    private val weatherStackApiService: WeatherStackApiService
-) : WeatherNetworkDataSource {
 
-    private val _downloadedCurrentWeather = MutableLiveData<CurrentWeatherResponse>()
-
+/*
+ * Class for fetching the current weather
+ */
+class WeatherNetworkDataSourceImpl(private val weatherStackApiService: WeatherStackApiService) : WeatherNetworkDataSource {
+    private val getCurWeather = MutableLiveData<CurrentWeatherResponse>()
     override val downloadedCurrentWeather: LiveData<CurrentWeatherResponse>
-        get() = _downloadedCurrentWeather
+        get() = getCurWeather
 
     override suspend fun fetchCurrentWeather(location: String, languageCode: String) {
-        try {
-            val fetchCurrentWeather = weatherStackApiService.getCurrentWeatherAsync(
-                location, languageCode
-            ).await()
-            _downloadedCurrentWeather.postValue(fetchCurrentWeather)
-        } catch (e: NoConnectivityException) {
-            Log.e("Connectivity", "No Network Connection", e)
-        }
+        val fetchCurrentWeather = weatherStackApiService.getCurrentWeatherAsync(location, languageCode).await()
+        getCurWeather.postValue(fetchCurrentWeather)
+
+
+
     }
 }

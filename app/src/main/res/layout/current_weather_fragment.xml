@@ -7,25 +7,25 @@
     tools:context=".ui.weather.current.CurrentWeatherFragment">
 
     <TextView
-        android:id="@+id/textView_condition"
+        android:id="@+id/conditionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_condition_icon"
+        app:layout_constraintTop_toBottomOf="@+id/condition_image"
         tools:text="Patchy rain possible" />
 
     <ImageView
-        android:id="@+id/imageView_condition_icon"
+        android:id="@+id/condition_image"
         android:layout_width="134dp"
         android:layout_height="126dp"
         android:layout_marginTop="32dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_feels_like_temperature"
+        app:layout_constraintTop_toBottomOf="@+id/feels_like_text"
         app:layout_constraintWidth_percent="0.25"
         tools:tint="#f9a920" />
 
@@ -41,7 +41,7 @@
         tools:text="25.0°C" />
 
     <TextView
-        android:id="@+id/textView_feels_like_temperature"
+        android:id="@+id/feels_like_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -56,29 +56,29 @@
         tools:text="It feels like 20.4°C" />
 
     <TextView
-        android:id="@+id/textView_wind"
+        android:id="@+id/windText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-        app:layout_constraintBottom_toTopOf="@+id/textView_visibility"
+        app:layout_constraintBottom_toTopOf="@+id/visibilityText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Wind: SE, 5.3 m/s" />
 
     <TextView
-        android:id="@+id/textView_precipitation"
+        android:id="@+id/precipitationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-        app:layout_constraintBottom_toTopOf="@+id/textView_wind"
+        app:layout_constraintBottom_toTopOf="@+id/windText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Precipitation: 5 mm" />
 
     <TextView
-        android:id="@+id/textView_visibility"
+        android:id="@+id/visibilityText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="64dp"

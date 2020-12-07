@@ -1,5 +1,8 @@
 package com.example.forecast.data.database.entity
 
+/*
+ * Class for request object
+ */
 data class Request(
     val type: String,
     val query: String,

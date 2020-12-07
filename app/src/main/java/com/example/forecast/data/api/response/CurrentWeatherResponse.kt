@@ -5,6 +5,9 @@ import com.example.forecast.data.database.entity.CurrentWeatherEntry
 import com.example.forecast.data.database.entity.WeatherLocation
 import com.example.forecast.data.database.entity.Request
 
+/*
+ * Class for current weather response
+ */
 data class CurrentWeatherResponse(
     val request: Request,
     val location: WeatherLocation,

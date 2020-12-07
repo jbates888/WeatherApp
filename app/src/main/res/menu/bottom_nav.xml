@@ -5,7 +5,7 @@
         android:icon="@drawable/ic_today"
         android:title="Today" />
     <item
-        android:id="@+id/futureWeatherFragment"
+        android:id="@+id/ratingsWeatherFragment"
         android:icon="@drawable/ic_baseline_golf_course_24"
         android:title="Ratings" />
     <item

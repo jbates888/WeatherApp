@@ -15,64 +15,57 @@ import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 import java.util.*
 
-class ForecastRepositoryImpl(
-    private val currentWeatherDao: CurrentWeatherDao,
-    private val weatherLocationDao: WeatherLocationDao,
-    private val weatherNetworkDataSource: WeatherNetworkDataSource,
-    private val locationProvider: LocationProvider
-) : ForecastRepository {
+/*
+ * Class for executing weather commands
+ */
+class ForecastRepositoryImpl(private val currentWeatherDao: CurrentWeatherDao, private val weatherLocationDao: WeatherLocationDao,
+                             private val weatherNetworkDataSource: WeatherNetworkDataSource, private val locationProvider: LocationProvider) : ForecastRepository {
 
-    init {
-        weatherNetworkDataSource.downloadedCurrentWeather.observeForever {
-            //persist
-            persistFetchedCurrentWeather(it) // newCurrentWeather
-        }
+    //checks if 15 minuets has passed since the last fetch
+    private fun isFetchCurrentNeeded(lastFetchTime: ZonedDateTime): Boolean {
+        val thirtyMinutesAgo = ZonedDateTime.now().minusMinutes(15)
+        return lastFetchTime.isBefore(thirtyMinutesAgo)
     }
-
+    //override and get the current weather
     override suspend fun getCurrentWeather(): LiveData<CurrentWeatherEntry> {
         initWeatherData()
         return withContext(Dispatchers.IO) {
             return@withContext currentWeatherDao.getWeather()
         }
     }
-
+    //override and get the location
     override suspend fun getWeatherLocation(): LiveData<WeatherLocation> {
         return withContext(Dispatchers.IO) {
             return@withContext weatherLocationDao.getLocation()
         }
     }
-
     private fun persistFetchedCurrentWeather(fetchedWeather: CurrentWeatherResponse) {
         GlobalScope.launch(Dispatchers.IO) {
             currentWeatherDao.upsert(fetchedWeather.currentWeatherEntry)
-
-            //persisting location
             weatherLocationDao.upsert(fetchedWeather.location)
         }
     }
-
+    //fetch the weather data if its needed
     private suspend fun initWeatherData() {
         val lastWeatherLocation = weatherLocationDao.getLocation().value
 
-        if (lastWeatherLocation == null ||
-            locationProvider.hasLocationChanged(lastWeatherLocation)
-        ) {
+        if (lastWeatherLocation == null || locationProvider.hasLocationChanged(lastWeatherLocation)) {
             fetchCurrentWeather()
             return
         }
-        if (isFetchCurrentNeeded(lastWeatherLocation.zonedDateTime))
+        if (isFetchCurrentNeeded(lastWeatherLocation.zonedDateTime)){
             fetchCurrentWeather()
+        }
     }
 
+    //get the current weather
     private suspend fun fetchCurrentWeather() {
-        weatherNetworkDataSource.fetchCurrentWeather(
-            locationProvider.getPreferredLocationString(),
-            Locale.getDefault().language
-        )
+        weatherNetworkDataSource.fetchCurrentWeather(locationProvider.getPreferredLocationString(), Locale.getDefault().language)
     }
 
-    private fun isFetchCurrentNeeded(lastFetchTime: ZonedDateTime): Boolean {
-        val thirtyMinutesAgo = ZonedDateTime.now().minusMinutes(30)
-        return lastFetchTime.isBefore(thirtyMinutesAgo)
+    init {
+        weatherNetworkDataSource.downloadedCurrentWeather.observeForever {
+            persistFetchedCurrentWeather(it)
+        }
     }
 }

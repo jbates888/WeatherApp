@@ -22,14 +22,13 @@ import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 import java.text.DecimalFormat
 
-
+/*
+ * The apps main fragment, shows the current weather
+ */
 class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
-
     override val kodein by closestKodein()
     private val viewModelFactory: CurrentWeatherViewModelFactory by instance()
     private lateinit var viewModel: CurrentWeatherViewModel
-
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.current_weather_fragment, container, false)
@@ -37,7 +36,9 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        //set the view model
         viewModel = ViewModelProvider(this, viewModelFactory).get(CurrentWeatherViewModel::class.java)
+        //bind the elements
         bindUI()
     }
 
@@ -46,27 +47,15 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         val currentWeather = viewModel.weather.await()
         val weatherLocation = viewModel.weatherLocation.await()
 
+        //update the current location
         weatherLocation.observe(this@CurrentWeatherFragment, Observer { location ->
             if (location == null) return@Observer
-
-            Log.d("location.name", location.name)
-            Log.d("location.timezoneId", location.timezoneId)
-            Log.d("location.country", location.country)
-            Log.d("location.localtime", location.localtime)
-            Log.d("location.region", location.region)
-            Log.d("location.utcOffset", location.utcOffset)
-            Log.d("location.id", "${location.id}")
-            Log.d("location.lat", "${location.lat}")
-            Log.d("location.localtimeEpoch", "${location.localtimeEpoch}")
-            Log.d("location.lon", "${location.lon}")
-            Log.d("location.zonedDateTime", "${location.zonedDateTime}")
-
             updateLocation(location.name)
         })
-
+        //update the current weather
         currentWeather.observe(this@CurrentWeatherFragment, Observer {
             if (it == null) return@Observer
-
+            //Set call the methods to update the weather on screen
             updateTemperatures(it.temperature, it.feelslike)
             updateCondition(it.weatherDescriptions[0])
             updatePrecipitation(it.precip)
@@ -84,7 +73,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                     )
                 )
             } else if (it.weatherDescriptions[0] == "Overcast" || it.weatherDescriptions[0] == "Cloudy") {
-                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#BDBDBD"))
+                this@CurrentWeatherFragment.view?.setBackgroundColor(Color.parseColor("#a7cad1"))
                 (activity as? AppCompatActivity)?.supportActionBar?.setBackgroundDrawable(
                     ColorDrawable(
                         Color.parseColor(
@@ -137,79 +126,84 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                 )
             }
 
-            //load the current weather
-            GlideApp.with(this@CurrentWeatherFragment)
-                .load(it.weatherIcons[0])
-                .into(imageView_condition_icon)
+            //load the current weather image
+            GlideApp.with(this@CurrentWeatherFragment).load(it.weatherIcons[0]).into(condition_image)
         })
     }
-
+    //set the unit system
     private fun chooseLocalizedUnitAbbreviation(metric: String, imperial: String): String {
         return if (viewModel.isMetric) metric else imperial
     }
 
-    private fun updateLocation(location: String) {
-        (activity as? AppCompatActivity)?.supportActionBar?.title = location
+    //update the viability speed on screen
+    private fun updateVisibility(visibilityDistance: Double) {
+        //get the selected unit
+        val unitAbbreviation = chooseLocalizedUnitAbbreviation("km", "mi.")
+        if (unitAbbreviation == "km") {
+            val metricVis = "Visibility: $visibilityDistance $unitAbbreviation"
+            visibilityText.text = metricVis
+        } else if (unitAbbreviation == "mi.") {
+            val impVisNum = visibilityDistance / 1.609
+            val imperialVis = "Visibility: ${decimalFormat.format(impVisNum)} $unitAbbreviation"
+            visibilityText.text = imperialVis
+        }
     }
 
+    //update the screens condition
+    private fun updateCondition(condition: String) {
+        conditionText.text = condition
+    }
+
+    //update the temp on the screen with proper unit system
     private fun updateTemperatures(temperature: Double, feelsLikeTemp: Double) {
         val unitAbbreviation = chooseLocalizedUnitAbbreviation("°C", "°F")
         if (unitAbbreviation == "°C") {
-            val metricTemperatureText = "$temperature$unitAbbreviation"
-            textView_temperature.text = metricTemperatureText
-            val metricFeelsLikeTemperatureText = "Feels Like $feelsLikeTemp$unitAbbreviation"
-            textView_feels_like_temperature.text = metricFeelsLikeTemperatureText
+            val metricText = "$temperature$unitAbbreviation"
+            textView_temperature.text = metricText
+            val metricFeelsLike = "Feels Like $feelsLikeTemp$unitAbbreviation"
+            feels_like_text.text = metricFeelsLike
         } else if (unitAbbreviation == "°F") {
+            //convert to Fahrenheit
             val tempInImperial = (temperature * 9 / 5) + 32
-            val imperialTemperatureText = "${decimalFormat.format(tempInImperial)}$unitAbbreviation"
-            textView_temperature.text = imperialTemperatureText
-            val imperialFeelsLikeTemperatureText =
-                "Feels Like ${(feelsLikeTemp * 9 / 5) + 32}$unitAbbreviation"
-            textView_feels_like_temperature.text = imperialFeelsLikeTemperatureText
+            val imperialText = "${decimalFormat.format(tempInImperial)}$unitAbbreviation"
+            textView_temperature.text = imperialText
+            val imperialFeels = "Feels Like ${(feelsLikeTemp * 9 / 5) + 32}$unitAbbreviation"
+            feels_like_text.text = imperialFeels
         }
     }
 
-    private fun updateCondition(condition: String) {
-        textView_condition.text = condition
-    }
-
+    //update the screens precipitation
     private fun updatePrecipitation(precipitationVolume: Double) {
+        //get the selected unit
         val unitAbbreviation = chooseLocalizedUnitAbbreviation("mm", "in")
         if (unitAbbreviation == "mm") {
-            val metricPrecipitationText = "Precipitation: $precipitationVolume $unitAbbreviation"
-            textView_precipitation.text = metricPrecipitationText
+            val metricPrecip = "Precipitation: $precipitationVolume $unitAbbreviation"
+            precipitationText.text = metricPrecip
         } else if (unitAbbreviation == "in") {
-            val precipitationVolumeImperial = precipitationVolume / 25.4
-            val imperialPrecipitationText =
-                "Precipitation: ${decimalFormat.format(precipitationVolumeImperial)} $unitAbbreviation"
-            textView_precipitation.text = imperialPrecipitationText
+            val impPrecip = precipitationVolume / 25.4
+            val imperialPrecipText = "Precipitation: ${decimalFormat.format(impPrecip)} $unitAbbreviation"
+            precipitationText.text = imperialPrecipText
         }
     }
 
+    //update the wind speed on screen
     private fun updateWind(windDirection: String, windSpeed: Double) {
+        //get the selected unit
         val unitAbbreviation = chooseLocalizedUnitAbbreviation("kph", "mph")
         if (unitAbbreviation == "kph") {
-            val metricWindText = "Wind: $windDirection, $windSpeed $unitAbbreviation"
-            textView_wind.text = metricWindText
+            val metricWind = "Wind: $windDirection, $windSpeed $unitAbbreviation"
+            windText.text = metricWind
         } else if (unitAbbreviation == "mph") {
+            //convert to MPH
             val windSpeedImperial = windSpeed / 1.609
-            val imperialWindText =
-                "Wind: $windDirection, ${decimalFormat.format(windSpeedImperial)} $unitAbbreviation"
-            textView_wind.text = imperialWindText
+            val imperialWind = "Wind: $windDirection, ${decimalFormat.format(windSpeedImperial)} $unitAbbreviation"
+            windText.text = imperialWind
         }
     }
 
-    private fun updateVisibility(visibilityDistance: Double) {
-        val unitAbbreviation = chooseLocalizedUnitAbbreviation("km", "mi.")
-        if (unitAbbreviation == "km") {
-            val metricVisibilityText = "Visibility: $visibilityDistance $unitAbbreviation"
-            textView_visibility.text = metricVisibilityText
-        } else if (unitAbbreviation == "mi.") {
-            val visibilityDistanceImperial = visibilityDistance / 1.609
-            val imperialVisibilityText =
-                "Visibility: ${decimalFormat.format(visibilityDistanceImperial)} $unitAbbreviation"
-            textView_visibility.text = imperialVisibilityText
-        }
+    //update the title to the current location
+    private fun updateLocation(location: String) {
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Weather for: $location"
     }
 
     companion object {

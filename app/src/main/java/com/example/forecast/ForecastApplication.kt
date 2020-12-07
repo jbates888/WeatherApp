@@ -23,24 +23,34 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
+/*
+ * Class to bind all objects
+ */
 class ForecastApplication : Application(), KodeinAware {
+
+    override fun onCreate() {
+        super.onCreate()
+        AndroidThreeTen.init(this)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+    }
+
     override val kodein = Kodein.lazy {
         import(androidXModule(this@ForecastApplication))
 
         bind() from singleton {
-            ForecastDatabase(instance())
+            instance<ForecastDatabase>().currentWeatherDao()
         }
         bind() from singleton {
-            instance<ForecastDatabase>().currentWeatherDao()
+            WeatherStackApiService(instance())
         }
         bind() from singleton {
             instance<ForecastDatabase>().weatherLocationDao()
         }
+        bind() from singleton {
+            ForecastDatabase(instance())
+        }
         bind<ConnectivityInterceptor>() with singleton {
             ConnectivityInterceptorImpl(instance())
-        }
-        bind() from singleton {
-            WeatherStackApiService(instance())
         }
         bind<WeatherNetworkDataSource>() with singleton {
             WeatherNetworkDataSourceImpl(instance())
@@ -51,25 +61,17 @@ class ForecastApplication : Application(), KodeinAware {
         bind<LocationProvider>() with singleton {
             LocationProviderImpl(instance(), instance())
         }
-        bind<ForecastRepository>() with singleton {
-            ForecastRepositoryImpl(instance(), instance(), instance(), instance())
-        }
         bind<UnitProvider>() with singleton {
             UnitProviderImpl(instance())
         }
         bind() from provider {
-            CurrentWeatherViewModelFactory(instance(), instance())
-        }
-
-        bind() from provider {
             RatingsWeatherViewModelFactory(instance(), instance())
         }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        AndroidThreeTen.init(this)
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+        bind() from provider {
+            CurrentWeatherViewModelFactory(instance(), instance())
+        }
+        bind<ForecastRepository>() with singleton {
+            ForecastRepositoryImpl(instance(), instance(), instance(), instance())
+        }
     }
 }

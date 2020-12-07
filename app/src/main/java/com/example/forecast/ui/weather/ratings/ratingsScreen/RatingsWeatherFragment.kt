@@ -21,6 +21,9 @@ import org.kodein.di.generic.instance
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 
+/*
+ * Ratings fragment
+ */
 class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
 
     override val kodein by closestKodein()
@@ -39,29 +42,21 @@ class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
 
     @SuppressLint("FragmentLiveDataObserve")
     private fun bindUI() = launch {
+        //get the current weather and location
         val currentWeather = viewModel.weather.await()
         val weatherLocation = viewModel.weatherLocation.await()
 
+        //get the current location
         weatherLocation.observe(this@RatingsWeatherFragment, Observer { location ->
             if (location == null) return@Observer
-
-            Log.d("location.name", location.name)
-            Log.d("location.timezoneId", location.timezoneId)
-            Log.d("location.country", location.country)
-            Log.d("location.localtime", location.localtime)
-            Log.d("location.region", location.region)
-            Log.d("location.utcOffset", location.utcOffset)
-            Log.d("location.id", "${location.id}")
-            Log.d("location.lat", "${location.lat}")
-            Log.d("location.localtimeEpoch", "${location.localtimeEpoch}")
-            Log.d("location.lon", "${location.lon}")
-            Log.d("location.zonedDateTime", "${location.zonedDateTime}")
-
+            //update the location
             updateLocation(location.name)
         })
 
+        //get the current weather
         currentWeather.observe(this@RatingsWeatherFragment, Observer {
             if (it == null) return@Observer
+            //update all the ratings
             updateRunningRating(it.temperature, it.precip, it.windSpeed)
             updateBikingRating(it.temperature, it.precip, it.windSpeed)
             updateHikingRating(it.temperature, it.precip, it.windSpeed)
@@ -72,6 +67,7 @@ class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
         })
     }
 
+    //update the rating for running on screen
     private fun updateRunningRating(temp: Double, precip: Double, wind: Double){
         var runRating = 0
         if(temp > 9 && temp <= 35){
@@ -79,15 +75,19 @@ class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
         }
         if(precip == 0.0){
             runRating += 25;
+        } else if(precip <= 2.0){
+            runRating += 10;
         }
-        if(wind < 8){
-            runRating += 25;
+        if(wind < 3){
+            runRating += 35;
+        } else if(wind < 10){
+            runRating += 15;
         }
 
         RunProgressBar.max = 100;
         RunProgressBar.progress = runRating
     }
-
+    //update the rating for biking on screen
     private fun updateBikingRating(temp: Double, precip: Double, wind: Double){
         var bikeRating = 0
         if(temp > 9 && temp <= 35){
@@ -95,15 +95,19 @@ class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
         }
         if(precip == 0.0){
             bikeRating += 25;
+        } else if(precip <= 5.0){
+            bikeRating += 10;
         }
-        if(wind < 5){
+        if(wind < 1){
             bikeRating += 25;
+        } else if(wind < 8){
+            bikeRating += 15;
         }
 
         BikeProgressBar.max = 100;
         BikeProgressBar.progress = bikeRating
     }
-
+    //update the rating for hiking on screen
     private fun updateHikingRating(temp: Double, precip: Double, wind: Double){
         var hikeRating = 0
         if(temp > 10 && temp <= 25){
@@ -111,47 +115,60 @@ class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
         }
         if(precip == 0.0){
             hikeRating += 25;
+        } else if(precip <= 5){
+            hikeRating += 15;
         }
-        if(wind < 10){
+        if(wind < 5){
             hikeRating += 25;
+        } else if(wind < 10){
+            hikeRating += 15;
         }
 
         HikeProgressBar.max = 100;
         HikeProgressBar.progress = hikeRating
     }
-
+    //update the rating for golfing on screen
     private fun updateGolfingRating(temp: Double, precip: Double, wind: Double){
         var golfRating = 0
         if(temp > 11 && temp <= 30){
             golfRating += 50;
         }
-        if(precip == 0.0){
-            golfRating += 25;
+        if(precip <= 3.0){
+            golfRating += 10;
+        } else if(precip == 0.0){
+            golfRating += 35;
         }
-        if(wind < 3){
+        if(wind == 0.0){
             golfRating += 25;
+        } else if(wind < 5){
+            golfRating += 10;
         }
 
         GolfProgressBar.max = 100;
         GolfProgressBar.progress = golfRating
     }
-
+    //update the rating for skiing on screen
     private fun updateSkiingRating(temp: Double, precip: Double, wind: Double){
         var skiRating = 0
         if(temp > -25 && temp <= 0){
             skiRating += 50;
         }
-        if(precip > 1.0){
+        if(precip > 5.0){
             skiRating += 25;
+        } else if(precip > 0.0){
+            skiRating += 15;
         }
         if(wind < 5){
             skiRating += 25;
+        }
+        if(temp > 2){
+            skiRating = 0;
         }
 
         SkiProgressBar.max = 100;
         SkiProgressBar.progress = skiRating
     }
-
+    //update the rating for camping on screen
     private fun updateCampingRating(temp: Double, precip: Double, wind: Double){
         var campRating = 0
         if(temp > 9 && temp <= 35){
@@ -159,6 +176,8 @@ class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
         }
         if(precip == 0.0){
             campRating += 25;
+        } else if(precip <= 3.0){
+            campRating += 10;
         }
         if(wind < 10){
             campRating += 25;
@@ -167,7 +186,7 @@ class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
         CampProgressBar.max = 100;
         CampProgressBar.progress = campRating
     }
-
+    //update the rating for swimming on screen
     private fun updateSwimmingRating(temp: Double, precip: Double, wind: Double){
         var swimRating = 0
         if(temp > 23 && temp <= 38){
@@ -179,11 +198,14 @@ class RatingsWeatherFragment : ScopedFragment(), KodeinAware {
         if(wind < 10){
             swimRating += 25;
         }
+        if(precip >= 3.0 || temp < 10){
+            swimRating = 0;
+        }
 
         SwimProgressBar.max = 100;
         SwimProgressBar.progress = swimRating
     }
-
+    //update the location
     private fun updateLocation(location: String) {
         (activity as? AppCompatActivity)?.supportActionBar?.title = location
     }

@@ -11,12 +11,12 @@
         android:label="Current Weather"
         tools:layout="@layout/current_weather_fragment" />
     <fragment
-        android:id="@+id/futureWeatherFragment"
+        android:id="@+id/ratingsWeatherFragment"
         android:name="com.example.forecast.ui.weather.ratings.ratingsScreen.RatingsWeatherFragment"
-        android:label="Future Weather"
+        android:label="Ratings"
         tools:layout="@layout/ratings_weather_fragment" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.forecast.ui.settings.SettingsFragment"
-        android:label="Settings Fragment" />
+        android:label="Settingst" />
 </navigation>

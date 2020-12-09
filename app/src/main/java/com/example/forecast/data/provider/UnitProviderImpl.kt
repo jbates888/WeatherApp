@@ -1,7 +1,7 @@
 package com.example.forecast.data.provider
 
 import android.content.Context
-import com.example.forecast.internal.UnitSystem
+import com.example.forecast.background.UnitSystem
 
 const val UNIT_SYSTEM = "UNIT_SYSTEM"
 

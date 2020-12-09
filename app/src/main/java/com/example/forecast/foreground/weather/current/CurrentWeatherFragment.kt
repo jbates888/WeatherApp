@@ -1,20 +1,18 @@
-package com.example.forecast.ui.weather.current
+package com.example.forecast.foreground.weather.current
 
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.forecast.R
-import com.example.forecast.internal.glide.GlideApp
-import com.example.forecast.ui.base.ScopedFragment
+import com.example.forecast.background.glide.GlideApp
+import com.example.forecast.foreground.base.ScopedFragment
 import kotlinx.android.synthetic.main.current_weather_fragment.*
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware

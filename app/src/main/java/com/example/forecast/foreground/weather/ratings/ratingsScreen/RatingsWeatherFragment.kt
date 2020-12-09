@@ -1,21 +1,16 @@
-package com.example.forecast.ui.weather.ratings.ratingsScreen
+package com.example.forecast.foreground.weather.ratings.ratingsScreen
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.forecast.R
 import kotlinx.coroutines.launch
-import com.example.forecast.internal.glide.GlideApp
-import com.example.forecast.ui.base.ScopedFragment
+import com.example.forecast.foreground.base.ScopedFragment
 import kotlinx.android.synthetic.main.ratings_weather_fragment.*
 import org.kodein.di.generic.instance
 import org.kodein.di.KodeinAware

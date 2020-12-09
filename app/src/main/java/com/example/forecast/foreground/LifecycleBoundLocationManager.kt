@@ -1,4 +1,4 @@
-package com.example.forecast.ui
+package com.example.forecast.foreground
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver

@@ -2,7 +2,7 @@ package com.example.forecast.data.database.entity
 
 import androidx.room.*
 import com.google.gson.annotations.SerializedName
-import com.example.forecast.internal.Converters
+import com.example.forecast.background.Converters
 
 const val CURRENT_WEATHER_ID = 0
 

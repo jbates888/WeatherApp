@@ -6,7 +6,7 @@ import com.example.forecast.data.database.dao.CurrentWeatherDao
 import com.example.forecast.data.database.dao.WeatherLocationDao
 import com.example.forecast.data.database.entity.CurrentWeatherEntry
 import com.example.forecast.data.database.entity.WeatherLocation
-import com.example.forecast.internal.Converters
+import com.example.forecast.background.Converters
 
 /*
  * Class for data base to keep recent weather location loaded in the app, avoids extra api calls

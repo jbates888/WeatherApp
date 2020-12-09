@@ -1,8 +1,8 @@
-package com.example.forecast.ui.weather.ratings.ratingsScreen
+package com.example.forecast.foreground.weather.ratings.ratingsScreen
 
 import androidx.lifecycle.ViewModel
 import com.example.forecast.data.repository.ForecastRepository
-import com.example.forecast.internal.lazyDeferred
+import com.example.forecast.background.lazyDeferred
 
 /*
  * View model for the ratings fragment

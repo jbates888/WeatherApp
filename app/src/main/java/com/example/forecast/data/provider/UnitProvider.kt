@@ -1,6 +1,6 @@
 package com.example.forecast.data.provider
 
-import com.example.forecast.internal.UnitSystem
+import com.example.forecast.background.UnitSystem
 
 /*
  * interface for unit system (metric or imperial)

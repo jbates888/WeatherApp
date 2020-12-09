@@ -1,4 +1,4 @@
-package com.example.forecast.internal
+package com.example.forecast.background
 
 import kotlinx.coroutines.*
 

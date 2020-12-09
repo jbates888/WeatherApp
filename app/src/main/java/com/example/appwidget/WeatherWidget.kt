@@ -5,14 +5,12 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
 import android.widget.RemoteViews
 import com.example.forecast.R
-import com.example.forecast.ui.MainActivity
+import com.example.forecast.foreground.MainActivity
 
 
 /**
@@ -38,14 +36,9 @@ class WeatherWidget : AppWidgetProvider(), LocationListener {
         appWidgetIds.forEach { appWidgetId ->
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
-
-
-
     }
 
-
     override fun onLocationChanged(location: Location) {
-
 
     }
 

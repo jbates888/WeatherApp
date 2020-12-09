@@ -7,16 +7,16 @@
 
     <fragment
         android:id="@+id/currentWeatherFragment"
-        android:name="com.example.forecast.ui.weather.current.CurrentWeatherFragment"
+        android:name="com.example.forecast.foreground.weather.current.CurrentWeatherFragment"
         android:label="Current Weather"
         tools:layout="@layout/current_weather_fragment" />
     <fragment
         android:id="@+id/ratingsWeatherFragment"
-        android:name="com.example.forecast.ui.weather.ratings.ratingsScreen.RatingsWeatherFragment"
+        android:name="com.example.forecast.foreground.weather.ratings.ratingsScreen.RatingsWeatherFragment"
         android:label="Ratings"
         tools:layout="@layout/ratings_weather_fragment" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.forecast.ui.settings.SettingsFragment"
+        android:name="com.example.forecast.foreground.settings.SettingsFragment"
         android:label="Settingst" />
 </navigation>

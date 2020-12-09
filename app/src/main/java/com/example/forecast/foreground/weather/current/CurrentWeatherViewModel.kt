@@ -1,10 +1,10 @@
-package com.example.forecast.ui.weather.current
+package com.example.forecast.foreground.weather.current
 
 import androidx.lifecycle.ViewModel
 import com.example.forecast.data.provider.UnitProvider
 import com.example.forecast.data.repository.ForecastRepository
-import com.example.forecast.internal.UnitSystem
-import com.example.forecast.internal.lazyDeferred
+import com.example.forecast.background.UnitSystem
+import com.example.forecast.background.lazyDeferred
 
 /*
  * View model for the current weather fragment

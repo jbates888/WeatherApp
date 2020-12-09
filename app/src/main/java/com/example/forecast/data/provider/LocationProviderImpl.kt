@@ -2,15 +2,13 @@ package com.example.forecast.data.provider
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.example.forecast.data.database.entity.WeatherLocation
-import com.example.forecast.internal.asDeferredAsync
+import com.example.forecast.background.asDeferredAsync
 import kotlinx.coroutines.Deferred
 import kotlin.math.abs
 

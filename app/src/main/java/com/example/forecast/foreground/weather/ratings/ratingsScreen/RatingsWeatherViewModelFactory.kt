@@ -1,4 +1,4 @@
-package com.example.forecast.ui.weather.ratings.ratingsScreen
+package com.example.forecast.foreground.weather.ratings.ratingsScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

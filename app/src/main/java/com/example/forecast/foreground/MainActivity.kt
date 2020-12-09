@@ -1,10 +1,8 @@
-package com.example.forecast.ui
+package com.example.forecast.foreground
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -15,7 +13,6 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
 import com.example.forecast.R
 import com.example.forecast.R.*
 import kotlinx.android.synthetic.main.activity_main.*

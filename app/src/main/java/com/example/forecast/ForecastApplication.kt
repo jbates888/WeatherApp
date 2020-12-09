@@ -13,8 +13,8 @@ import com.example.forecast.data.provider.UnitProvider
 import com.example.forecast.data.provider.UnitProviderImpl
 import com.example.forecast.data.repository.ForecastRepository
 import com.example.forecast.data.repository.ForecastRepositoryImpl
-import com.example.forecast.ui.weather.current.CurrentWeatherViewModelFactory
-import com.example.forecast.ui.weather.ratings.ratingsScreen.RatingsWeatherViewModelFactory
+import com.example.forecast.foreground.weather.current.CurrentWeatherViewModelFactory
+import com.example.forecast.foreground.weather.ratings.ratingsScreen.RatingsWeatherViewModelFactory
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
